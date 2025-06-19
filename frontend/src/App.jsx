@@ -1,5 +1,3 @@
-// frontend/src/components/NewTubeCreatorAssistant.jsx
-
 import React, { useState, useCallback, useMemo } from 'react';
 import { useDropzone } from 'react-dropzone';
 import { UploadCloud, Film, Type, FileText, Image as ImageIcon, Copy, Download, Loader, AlertTriangle, CheckCircle } from 'lucide-react';
@@ -62,7 +60,7 @@ const ResultField = ({ label, children }) => {
 
 // --- Main App Component ---
 
-export default function NewTubeCreatorAssistant() {
+export default function App() {
   const [videoFile, setVideoFile] = useState(null);
   const [language, setLanguage] = useState('en');
   const [status, setStatus] = useState('idle'); // idle, uploading, processing, success, error
@@ -119,7 +117,7 @@ export default function NewTubeCreatorAssistant() {
 
 
     try {
-        // IMPORTANT: Replace with your actual API endpoint URL
+        // IMPORTANT: This must match the URL where your Python backend is running.
         const API_URL = "http://127.0.0.1:8000/process-video/";
 
         const response = await fetch(API_URL, {
