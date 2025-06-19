@@ -2,7 +2,7 @@ import React, { useState, useCallback, useMemo } from 'react';
 import { useDropzone } from 'react-dropzone';
 import { UploadCloud, Film, Type, FileText, Image as ImageIcon, Copy, Download, Loader, AlertTriangle, CheckCircle } from 'lucide-react';
 
-// --- Helper Components ---
+// --- Helper Components for a cleaner UI ---
 
 const IconWrapper = ({ icon: Icon, className = '' }) => (
   <div className={`p-3 bg-gray-700/50 rounded-full ${className}`}>
