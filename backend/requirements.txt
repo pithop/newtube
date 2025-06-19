@@ -1,0 +1,15 @@
+# backend/requirements.txt
+
+# For the web server
+fastapi
+uvicorn[standard]
+python-multipart
+
+# For video and audio processing
+openai-whisper
+torch
+opencv-python-headless
+numpy
+
+# For image manipulation
+Pillow
