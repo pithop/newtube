@@ -114,8 +114,8 @@ export default function App() {
     }, 200);
 
     try {
-        // IMPORTANT: REPLACE THIS WITH YOUR DEPLOYED BACKEND URL
-        const API_URL = "http://127.0.0.1:8000/process-video/";
+        // IMPORTANT: This is now your public backend URL from Hugging Face
+        const API_URL = "https://pithop-creator-assistant.hf.space/process-video/";
         const response = await fetch(API_URL, { method: 'POST', body: formData });
         
         clearInterval(progressInterval);
