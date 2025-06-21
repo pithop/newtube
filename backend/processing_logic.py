@@ -22,7 +22,7 @@ MODEL_SIZE = "base"
 # IMPORTANT: You would need to get a real API key from a service like Google AI Studio
 # and ideally store it securely (e.g., in an environment variable), not hardcoded.
 # For this example, we will leave it blank as per instructions.
-GEMINI_API_KEY = "AIzaSyC-oWQJWU5ZV7tX9_NBfu4RyWOCvxQVX2U"
+GEMINI_API_KEY = ""
 
 
 # --- AI Content Generation (The New Feature) ---
