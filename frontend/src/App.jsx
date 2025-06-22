@@ -1,4 +1,5 @@
 import React, { useState, useCallback, useEffect } from 'react';
+import { Analytics } from '@vercel/analytics/react'; 
 import ProcessingScreen from './ProcessingScreen';
 import EditorScreen from './EditorScreen';
 import { useDropzone } from 'react-dropzone';
@@ -99,16 +100,18 @@ export default function App() {
     setError('');
   };
 
-  if (status === 'success' && results) {
-    return <EditorScreen results={results} videoFile={videoFile} onReset={handleReset} />;
-  }
-  
-  if (status === 'processing' || (status === 'error' && !results)) {
-    return <ProcessingScreen progress={progress} message={progressMessage} error={error} onReset={handleReset} />;
-  }
-
-  // Pass the number of tries left to the UploadScreen
-  return <UploadScreen onProcess={handleProcessVideo} error={error} triesLeft={triesLeft} />;
+  return (
+    <>
+      {status === 'success' && results ? (
+        <EditorScreen results={results} videoFile={videoFile} onReset={handleReset} />
+      ) : status === 'processing' || (status === 'error' && !results) ? (
+        <ProcessingScreen progress={progress} message={progressMessage} error={error} onReset={handleReset} />
+      ) : (
+        <UploadScreen onProcess={handleProcessVideo} error={error} triesLeft={triesLeft} />
+      )}
+      <Analytics />
+    </>
+  );
 }
 
 // --- UI Components ---
@@ -154,9 +157,15 @@ const UploadScreen = ({ onProcess, error, triesLeft }) => {
 };
 
 const Footer = () => (
-    <footer className="w-full text-center py-4 mt-auto">
-        <a href="https://buymeacoffee.com/pithop" target="_blank" rel="noopener noreferrer" className="inline-flex items-center gap-2 px-4 py-2 text-sm bg-gray-800 rounded-lg hover:bg-gray-700 transition-colors">
-            <Coffee className="text-yellow-400"/> Found this useful? Buy me a coffee!
-        </a>
-    </footer>
+  <footer className="w-full text-center py-4 mt-auto">
+      <div className="flex justify-center items-center gap-4">
+          <a href="https://buymeacoffee.com/pithop" target="_blank" rel="noopener noreferrer" className="...">
+              <Coffee className="text-yellow-400"/> Found this useful? Buy me a coffee!
+          </a>
+           {/* NEW: Feedback Link */}
+          <a href="mailto:chahidriss01@gmail.com?subject=Feedback for Creator AI Co-Pilot" className="text-sm text-gray-400 hover:text-white transition-colors">
+              Give Feedback
+          </a>
+      </div>
+  </footer>
 );
