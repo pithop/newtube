@@ -1,6 +1,6 @@
 import React, { useState } from 'react';
 import TetrisGame from './TetrisGame';
-import { Loader, Gamepad2, AlertTriangle, Eye } from 'lucide-react';
+import { Loader, Gamepad2, AlertTriangle, Eye, X } from 'lucide-react';
 
 export default function ProcessingScreen({ progress, message, error, onReset }) {
   // 'waiting' is now the default view, giving the user a choice.
@@ -26,7 +26,7 @@ export default function ProcessingScreen({ progress, message, error, onReset }) 
         <div className="p-4 border-b border-gray-700">
             <div className="flex justify-between items-center mb-2">
                 <h3 className="font-bold text-lg text-white">Processing Your Video</h3>
-                {/* --- NEW: View Toggling Buttons --- */}
+                {/* --- View Toggling Buttons --- */}
                 <div className="flex items-center gap-2">
                     {viewMode === 'game' ? (
                         <button onClick={() => setViewMode('waiting')} title="Back to waiting view" className="flex items-center gap-2 px-3 py-1 bg-gray-700 text-sm rounded-md hover:bg-gray-600">
@@ -54,7 +54,15 @@ export default function ProcessingScreen({ progress, message, error, onReset }) 
                 </div>
             )}
             {viewMode === 'game' && (
-                <div className="w-full h-full max-w-sm max-h-[500px] flex items-center justify-center">
+                <div className="w-full h-full max-w-sm max-h-[500px] flex items-center justify-center relative">
+                    {/* --- NEW: Close button for the game view --- */}
+                    <button 
+                        onClick={() => setViewMode('waiting')} 
+                        className="absolute -top-2 -right-2 p-1 bg-gray-900/70 rounded-full hover:bg-gray-700 z-10"
+                        title="Close Game"
+                    >
+                        <X size={20} className="text-gray-400" />
+                    </button>
                     <TetrisGame />
                 </div>
             )}
