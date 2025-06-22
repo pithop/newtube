@@ -1,10 +1,8 @@
-import React, { useState, useCallback, useMemo, useEffect, useRef } from 'react';
-import { useDropzone } from 'react-dropzone';
-import { UploadCloud, Film, Type, Image as ImageIcon, Copy, Download, Loader, AlertTriangle, CheckCircle, Wand2, Coffee, Sparkles, Twitter, Linkedin, Hash, ClipboardCopy, ClipboardCheck } from 'lucide-react';
-
-// Import the NEW, separate components
+import React, { useState, useCallback, useEffect } from 'react';
 import ProcessingScreen from './ProcessingScreen';
 import EditorScreen from './EditorScreen';
+import { useDropzone } from 'react-dropzone';
+import { UploadCloud, Coffee } from 'lucide-react';
 
 // --- Main App Component ---
 export default function App() {
@@ -13,19 +11,44 @@ export default function App() {
   const [results, setResults] = useState(null);
   const [error, setError] = useState('');
   
+  // NEW: State for tracking "real" progress
+  const [progress, setProgress] = useState(0);
+  const [progressMessage, setProgressMessage] = useState('');
+
   const handleProcessVideo = async (file) => {
     if (!file) return;
     setStatus('processing');
     setError('');
-    setVideoFile(file); // Keep the file object for the video player
+    setVideoFile(file);
+    
+    // --- Realistic Progress Simulation ---
+    const totalDuration = 30; // Estimated processing time in seconds
+    let elapsedTime = 0;
+    setProgress(0);
+    setProgressMessage('Uploading video...');
+
+    const progressInterval = setInterval(() => {
+        elapsedTime++;
+        const currentProgress = Math.min(95, Math.floor((elapsedTime / totalDuration) * 100));
+        setProgress(currentProgress);
+        
+        if (currentProgress < 20) setProgressMessage('Initializing AI models...');
+        else if (currentProgress < 60) setProgressMessage('Transcribing audio... this is the longest step.');
+        else if (currentProgress < 85) setProgressMessage('Generating titles & descriptions...');
+        else setProgressMessage('Creating thumbnails...');
+
+    }, 1000);
 
     const formData = new FormData();
     formData.append('video_file', file);
     
     try {
-      // Ensure this URL points to your deployed Hugging Face Space
       const API_URL = "https://pithop-creator-assistant.hf.space/process-video/";
       const response = await fetch(API_URL, { method: 'POST', body: formData });
+      
+      clearInterval(progressInterval); // Stop simulation on response
+      setProgress(100);
+      setProgressMessage('Processing Complete!');
 
       if (!response.ok) {
         const errorData = await response.json();
@@ -35,6 +58,7 @@ export default function App() {
       setResults(data);
       setStatus('success');
     } catch (err) {
+      clearInterval(progressInterval); // Also stop on error
       setError(err.message || 'Failed to connect to the server.');
       setStatus('error');
     }
@@ -47,25 +71,20 @@ export default function App() {
     setError('');
   };
 
-  // The main render logic that switches between screens
   if (status === 'success' && results) {
     return <EditorScreen results={results} videoFile={videoFile} onReset={handleReset} />;
   }
   
-  if (status === 'processing') {
-    // When processing, show the new screen with the ad/game experience.
-    return <ProcessingScreen />;
+  if (status === 'processing' || status === 'error') {
+     // Pass the real progress and error state to the ProcessingScreen
+    return <ProcessingScreen progress={progress} message={progressMessage} error={error} onReset={handleReset} />;
   }
 
-  // Default view is the UploadScreen
-  return <UploadScreen onProcess={handleProcessVideo} error={error} />;
+  return <UploadScreen onProcess={handleProcessVideo} />;
 }
 
-
 // --- UI Components ---
-// We keep the UploadScreen here for simplicity, but EditorScreen is now in its own file.
-
-const UploadScreen = ({ onProcess, error }) => {
+const UploadScreen = ({ onProcess }) => {
     const [file, setFile] = useState(null);
     const onDrop = useCallback(acceptedFiles => {
         if (acceptedFiles.length > 0) setFile(acceptedFiles[0]);
@@ -84,7 +103,6 @@ const UploadScreen = ({ onProcess, error }) => {
                     <UploadCloud className="w-16 h-16 mx-auto text-gray-500 mb-4" />
                     <p className="text-center text-lg">{file ? `Selected: ${file.name}` : (isDragActive ? "Drop it like it's hot!" : "Drag & drop video file, or click to select")}</p>
                 </div>
-                {error && <p className="text-center text-red-400 mt-4">{error}</p>}
                 <button onClick={() => onProcess(file)} disabled={!file} className="w-full mt-6 py-3 bg-indigo-600 font-bold rounded-lg hover:bg-indigo-500 disabled:bg-gray-600 disabled:cursor-not-allowed transition-colors">Generate Content</button>
             </div>
             <Footer />
